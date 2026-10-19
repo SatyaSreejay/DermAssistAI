@@ -1,0 +1,10 @@
+# Phase 2: data pipeline and tests (Python 3.11).
+# Tested with: numpy 2.4.6, pandas 2.3.3, pillow 13.0.0, scikit-learn 1.9.1,
+# matplotlib 3.11.2, PyYAML 6.0.3, pytest 9.1.1
+numpy>=1.26,<3
+pandas>=2.1,<4
+pillow>=10
+scikit-learn>=1.3,<2
+matplotlib>=3.8
+pyyaml>=6
+pytest>=8

@@ -1,0 +1,15 @@
+# Full project. Phase 2 only needs requirements-core.txt.
+-r requirements-core.txt
+
+# Phase 3+ (models). Tested with torch 2.14.1 and torchvision 0.29.1 on CPU.
+# On Colab, torch and torchvision are pre-installed with GPU support.
+torch>=2.2
+torchvision>=0.17
+seaborn>=0.13
+
+# Phase 6 (app). Not installed or tested yet.
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+streamlit>=1.33
+requests>=2.31

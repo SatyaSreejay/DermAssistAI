@@ -1,0 +1,46 @@
+# --- Data: never commit images, metadata copies or generated data ---
+data/**
+!data/README.md
+!data/raw/
+!data/raw/.gitkeep
+!data/processed/
+!data/processed/.gitkeep
+
+# --- Model checkpoints and large generated files ---
+artifacts/**
+!artifacts/.gitkeep
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.npz
+*.npy
+*.joblib
+*.pkl
+*.zip
+
+# --- Generated reports (re-create them from the scripts) ---
+reports/**
+!reports/.gitkeep
+
+# --- Credentials and local settings ---
+.env
+.env.*
+*.key
+kaggle.json
+secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

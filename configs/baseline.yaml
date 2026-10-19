@@ -1,0 +1,72 @@
+# Phase 3: ResNet18 end-to-end baseline.
+#
+# Relative paths are resolved against the project root. On Colab, pass
+# --splits and --image-dir (and --output-dir on Drive) on the command line.
+
+data:
+  splits_csv: data/processed/splits.csv
+  image_dirs:
+    - data/raw
+  # Which training subset to use (columns in splits.csv): train_10pct,
+  # train_25pct, train_50pct or train_100pct. Validation and test never change.
+  train_subset: train_100pct
+
+model:
+  name: resnet18
+  # ImageNet weights from torchvision (about 45 MB, downloaded on first use).
+  pretrained: true
+  # Dropout before the final layer; 0 disables it.
+  dropout: 0.2
+
+input:
+  # Images are resized so the shorter side is `resize`, then cropped to
+  # `image_size`. HAM10000 images are 600x450.
+  resize: 256
+  image_size: 224
+  # ImageNet statistics, matching the pretrained weights. They are fixed
+  # constants, not estimated from our data, so they cannot leak test information.
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+augmentation:  # training images only
+  random_resized_crop_scale: [0.8, 1.0]
+  horizontal_flip: true
+  vertical_flip: true  # dermoscopy images have no natural "up"
+  rotation_degrees: 20
+  color_jitter: 0.1
+
+training:
+  seed: 42
+  # "auto" picks 64 on a GPU and 16 on CPU.
+  batch_size: auto
+  # "auto" picks 2 workers (Colab has 2 CPU cores); use 0 on Windows if loading hangs.
+  num_workers: auto
+  # How to counter class imbalance in the loss, using training-subset counts only:
+  #   none      plain cross-entropy
+  #   balanced  weight_c = n_samples / (n_classes * n_c)   (rare classes count more)
+  #   sqrt      square root of "balanced" (a milder correction)
+  # Compare at least "none" and "balanced" on the validation set (Phase 5).
+  class_weighting: balanced
+  # Mixed precision on GPU (faster, less memory). Ignored on CPU.
+  amp: true
+  # Model selection uses validation macro-F1, never the test set.
+  monitor: val_macro_f1
+  early_stopping_patience: 3
+  stages:
+    # 1) Train only the new classification layer; the pretrained backbone is frozen.
+    - name: head
+      trainable: head
+      epochs: 10
+      lr: 1.0e-3
+      weight_decay: 1.0e-4
+    # 2) Also fine-tune the last residual block, with a smaller learning rate.
+    #    Starts from the best weights of stage 1. Remove this stage for a
+    #    frozen-backbone-only baseline.
+    - name: finetune_layer4
+      trainable: layer4
+      epochs: 5
+      lr: 1.0e-4
+      weight_decay: 1.0e-4
+
+output:
+  artifacts_dir: artifacts/baseline

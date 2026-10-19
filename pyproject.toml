@@ -1,0 +1,11 @@
+[project]
+name = "dermassist-ai"
+version = "0.1.0"
+description = "Explainable skin-lesion classification research prototype (HAM10000). Educational use only."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+# Lets tests import `src` and `scripts` from the project root without installing.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra"

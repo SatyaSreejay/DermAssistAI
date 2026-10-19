@@ -1,0 +1,33 @@
+# Data pipeline configuration (Phase 2).
+#
+# Relative paths are resolved against the project root (the folder that
+# contains configs/), so the same file works on Windows, Linux and Colab.
+# Absolute paths are used as given. Every path can also be overridden on the
+# command line, e.g. --metadata and --image-dir.
+
+paths:
+  # The HAM10000 metadata file (one row per image).
+  metadata_csv: data/raw/HAM10000_metadata.csv
+  # One or more folders that contain the image files. Folders are searched
+  # recursively, so pointing at a parent folder is fine. On Colab this is
+  # usually something like /content/drive/MyDrive/HAM10000.
+  image_dirs:
+    - data/raw
+  # Generated, git-ignored outputs.
+  processed_dir: data/processed
+  reports_dir: reports/data
+
+validation:
+  # Open every image fully to catch corrupt or truncated files.
+  verify_images: true
+  # Hash every image file to find byte-identical copies under different ids.
+  hash_images: true
+
+split:
+  seed: 42
+  # Approximate fractions of *images*; lesions are never split across sets.
+  val_fraction: 0.15
+  test_fraction: 0.15
+  # Training-set fractions for the limited-data experiment (fractions of
+  # training lesions; smaller subsets are contained in larger ones).
+  train_fractions: [0.10, 0.25, 0.50, 1.00]
